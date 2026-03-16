@@ -1,0 +1,13 @@
+services:
+  streamlit-app:
+    build: .
+    container_name: streamlit_ui
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PYTHONPATH=/app
+    restart: unless-stopped

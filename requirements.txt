@@ -14,3 +14,4 @@ pdfplumber>=0.7.0
 langchain-text-splitters
 langchain-chroma
 openai
+pysqlite3-binary; sys_platform == "darwin"

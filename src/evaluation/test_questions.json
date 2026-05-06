@@ -1,0 +1,46 @@
+[{
+    "question": "What was Apple's net income in 2025?",
+    "expected_answer": "Apple's net income was approximately $93,736 million",
+    "difficulty": "easy"
+},
+{
+    "question": "What was Apple's stock performance compared to S&P 500 in 2025?",
+    "expected_answer": "Apple stock reached $234 versus S&P 500 at $217, based on $100 invested in 2020",
+    "difficulty": "easy"
+},
+{
+    "question": "How did Apple's R&D spending change from 2023 to 2025?",
+    "expected_answer": "R&D increased from $29,915 million in 2023 to $31,370 million in 2024 to $34,550 million in 2025",
+    "difficulty": "hard"
+},
+{
+    "question": "How much did Apple spend on share repurchases in 2025?",
+    "expected_answer": "Apple repurchased 402 million shares for $89.3 billion",
+    "difficulty": "medium"
+},
+{
+    "question": "What was Apple's total term debt principal?",
+    "expected_answer": "Total term debt principal was $91,281 million",
+    "difficulty": "medium"
+},
+{
+    "question": "What products and services does Apple offer?",
+    "expected_answer": "iPhone, Mac, iPad, wearables and accessories, and services including advertising, AppleCare, cloud, digital content, payment services",
+    "difficulty": "medium"
+},
+{
+    "question": "What is Apple's policy on remote work?",
+    "expected_answer": "Information not found in financial records.",
+    "difficulty": "unanswerable"
+},
+{
+    "question": "Who is Apple's biggest competitor?",
+    "expected_answer": "Information not found in financial records.",
+    "difficulty": "unanswerable"
+},
+{
+    "question": "What is the capital of France?",
+    "expected_answer": "Information not found in financial records.",
+    "difficulty": "unanswerable"
+}
+]

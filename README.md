@@ -237,3 +237,36 @@ Building this project reinforced several key principles:
 
 - GitHub: [github.com/anurag1210](https://github.com/anurag1210)
 - Twitter/X: #BuildInPublic #AIEngineering
+
+## Observability
+
+FinSight integrates with [LangSmith](https://smith.langchain.com) for full 
+observability of the RAG pipeline in production.
+
+Every query is automatically traced with:
+- **Latency** — end-to-end response time per query
+- **Token usage** — input and output tokens consumed
+- **Cost** — per-query OpenAI API cost
+- **Input/Output** — exact context retrieved and response generated
+- **Error tracking** — failed queries flagged for analysis
+
+### Setup
+
+Add the following to your `.env` file:
+
+```env
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
+LANGCHAIN_API_KEY=your-langsmith-api-key
+LANGCHAIN_PROJECT=finsight
+```
+
+No code changes required — LangChain automatically detects these variables 
+and traces every LangChain component call to LangSmith.
+
+### Dashboard
+
+![LangSmith Dashboard](figures/langsmith_dashboard.png)
+
+
+

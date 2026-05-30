@@ -18,6 +18,21 @@ The system retrieves relevant document sections, generates cited answers, and co
 
 ---
 
+## Recent Improvements
+
+### Conversational Query Reformation
+FinSight now maintains conversational context across multi-turn queries. 
+Ambiguous follow-up questions like "What was it in 2024?" are automatically 
+rewritten into explicit standalone queries ("What was Apple's total net sales 
+revenue in 2024?") before hitting the retriever — eliminating pronoun 
+resolution failures and year substitution hallucinations.
+
+### Streaming Responses
+LLM responses now stream token-by-token to the UI, matching the UX of 
+modern AI assistants. Eliminates the 3-4 second wait for full response 
+generation.
+
+
 ## Architecture
 
 ```

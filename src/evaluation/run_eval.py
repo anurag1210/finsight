@@ -5,6 +5,7 @@ import re
 import time
 from src.generation.generator import generate_response
 from src.evaluation.eval_dataset import load_eval_dataset
+from src.evaluation.metrics import llm_judge
 
 
 def extract_key_facts(expected_answer):
@@ -44,17 +45,29 @@ def evaluate_rag():
         latency = round(time.time() - start_time, 2)
         
         score = check_answer(q['expected_answer'], generated_answer, q['difficulty'])
+
+        # LLM as judge evaluation
+        judge_result = llm_judge(
+            question=q['question'],
+            expected_answer=q['expected_answer'],
+            generated_answer=generated_answer,
+            difficulty=q['difficulty']
+        )
         
         results.append({
             "question": q['question'],
             "difficulty": q['difficulty'],
             "expected": q['expected_answer'],
             "generated": generated_answer,
-            "score": score,
+            "keyword_score": score,
+            "llm_judge_score": judge_result.score,
+            "llm_judge_verdict": judge_result.verdict,
+            "llm_judge_rationale": judge_result.rationale,
             "latency_sec": latency
         })
         
-        print(f"   Score: {score:.2f} | Latency: {latency}s")
+        print(f"   Keyword: {score:.2f} | LLM Judge: {judge_result.score:.2f} ({judge_result.verdict}) | Latency: {latency}s")
+
 
     # Print Summary Report
     print("\n" + "=" * 50)
@@ -62,11 +75,13 @@ def evaluate_rag():
     print("=" * 50)
     
     total = len(results)
-    avg_score = sum(r['score'] for r in results) / total
+    avg_keyword = sum(r['keyword_score'] for r in results) / total
+    avg_judge = sum(r['llm_judge_score'] for r in results) / total
     avg_latency = sum(r['latency_sec'] for r in results) / total
     
     print(f"Total Questions: {total}")
-    print(f"Average Score: {avg_score:.2%}")
+    print(f"Average Keyword Score: {avg_keyword:.2%}")
+    print(f"Average LLM Judge Score: {avg_judge:.2%}")
     print(f"Average Latency: {avg_latency:.2f}s")
     
     # Grouped by difficulty
@@ -74,8 +89,13 @@ def evaluate_rag():
     for diff in ["easy", "medium", "hard", "unanswerable"]:
         diff_results = [r for r in results if r["difficulty"] == diff]
         if diff_results:
-            acc = sum(r['score'] for r in diff_results) / len(diff_results)
-            print(f"  {diff.capitalize()}: {acc:.2%} ({len(diff_results)} questions)")
+            acc_keyword = sum(r['keyword_score'] for r in diff_results) / len(diff_results)
+            acc_judge = sum(r['llm_judge_score'] for r in diff_results) / len(diff_results)
+            print(
+                f"  {diff.capitalize()}: "
+                f"Keyword {acc_keyword:.2%} | LLM Judge {acc_judge:.2%} "
+                f"({len(diff_results)} questions)"
+            )
 
     # Save results
     os.makedirs('evaluation_results', exist_ok=True)

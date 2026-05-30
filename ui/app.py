@@ -31,7 +31,7 @@ if query := st.chat_input("Please ask a financial question..."):
     with st.chat_message("assistant"):
         with st.spinner("Analyzing financial records..."):
             # Call your generation logic
-            response = generate_response(query)
+            response = generate_response(query,st.session_state.messages)
             st.markdown(response)
     
     # Add assistant response to session state

@@ -1,5 +1,5 @@
 import streamlit as st
-from src.generation.generator import generate_response
+from src.generation.generator import generate_response, generate_response_stream
 
 #Page Configuration
 st.set_page_config(page_title='Fintech RAG', layout="centered")
@@ -28,11 +28,11 @@ if query := st.chat_input("Please ask a financial question..."):
     st.session_state.messages.append({"role": "user", "content": query})
 
     # 5. Generate and Display Assistant Response
+    # With this:
     with st.chat_message("assistant"):
-        with st.spinner("Analyzing financial records..."):
-            # Call your generation logic
-            response = generate_response(query,st.session_state.messages)
-            st.markdown(response)
+        response = st.write_stream(
+        generate_response_stream(query, st.session_state.messages)
+    )
     
     # Add assistant response to session state
     st.session_state.messages.append({"role": "assistant", "content": response})

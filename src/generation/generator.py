@@ -4,23 +4,72 @@ from src.config import LLM_MODEL,OPENAI_API_KEY,MAX_TOKENS,LLM_TEMPERATURE
 from src.generation.prompt_templates import SYSTEM_PROMPT,formatting_retrieval,get_user_content
 
 #Function to generate the output response from the LLM
-def generate_response(query:str)-> str:
-    llm=ChatOpenAI(
-    model=LLM_MODEL,
-    api_key=OPENAI_API_KEY,
-    temperature=LLM_TEMPERATURE,
-    max_tokens=MAX_TOKENS,
+def reform_query(query: str, chat_history: list, llm) -> str:
+    if not chat_history:
+        return query
+    
+    history_text = "\n".join(
+        f"{m['role'].upper()}: {m['content']}" 
+        for m in chat_history[-4:]  # last 2 exchanges only
+    )
+    
+    reformation_prompt = f"""Given this conversation history:
+{history_text}
+
+Rewrite this follow-up query into a fully explicit standalone question.
+If it's already explicit, return it unchanged.
+Return ONLY the rewritten query, nothing else.
+
+Follow-up query: {query}"""
+
+    result = llm.invoke([("human", reformation_prompt)])
+    return result.content.strip()
+
+
+def generate_response(query: str, chat_history: list = []) -> str:
+    llm = ChatOpenAI(
+        model=LLM_MODEL,
+        api_key=OPENAI_API_KEY,
+        temperature=LLM_TEMPERATURE,
+        max_tokens=MAX_TOKENS,
     )
 
-    context = formatting_retrieval(query)
-    user_content=get_user_content(context, query)
+    # ADD THIS LINE — reform before hitting retriever
+    reformed_query = reform_query(query, chat_history, llm)
+
+    # CHANGE query to reformed_query in these two lines
+    context = formatting_retrieval(reformed_query)
+    user_content = get_user_content(context, reformed_query)
     
-    messages=[
-          ("system", SYSTEM_PROMPT),
-          ("human", user_content),
+    messages = [
+        ("system", SYSTEM_PROMPT),
+        ("human", user_content),
     ]
-    response=llm.invoke(messages)
+    response = llm.invoke(messages)
     return response.content
+
+
+def generate_response_stream(query: str, chat_history: list = []):
+    llm = ChatOpenAI(
+        model=LLM_MODEL,
+        api_key=OPENAI_API_KEY,
+        temperature=LLM_TEMPERATURE,
+        max_tokens=MAX_TOKENS,
+        streaming=True,
+    )
+
+    reformed_query = reform_query(query, chat_history, llm)
+    context = formatting_retrieval(reformed_query)
+    user_content = get_user_content(context, reformed_query)
+
+    messages = [
+        ("system", SYSTEM_PROMPT),
+        ("human", user_content),
+    ]
+
+    for chunk in llm.stream(messages):
+        yield chunk.content
+
 
 
 

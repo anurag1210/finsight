@@ -358,4 +358,4 @@ concurrent pressure.
 ![Locust Statistics](docs/screenshot/Locust_Stats.png)
 
 **Response Time Charts:**
-![Locust Charts](docs/screenshot/Locust_charts.png)
+![Locust Charts](docs/screenshot/Locust_Charts.png)

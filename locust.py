@@ -1,0 +1,39 @@
+from locust import HttpUser, task, between
+
+class FinSightUser(HttpUser):
+    wait_time = between(1, 3)
+    
+    @task(3)
+    def ask_revenue(self):
+        self.client.post("/query", json={
+            "query": "What is Apple's total revenue in 2025?"
+        })
+    
+    @task(3)
+    def ask_applecare(self):
+        self.client.post("/query", json={
+            "query": "What is AppleCare?"
+        })
+    
+    @task(2)
+    def ask_iphone_revenue(self):
+        self.client.post("/query", json={
+            "query": "What was iPhone revenue in 2025?"
+            
+        })
+    
+    @task(2)
+    def ask_risks(self):
+        self.client.post("/query", json={
+            "query": "What are the main risks Apple mentions?"
+        })
+    
+    @task(1)
+    def ask_out_of_scope(self):
+        self.client.post("/query", json={
+            "query": "Tell me about Google financials"
+        })
+    
+    @task(1)
+    def health_check(self):
+        self.client.get("/health")

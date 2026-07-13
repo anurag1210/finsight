@@ -1,0 +1,101 @@
+[
+  {
+    "question": "What was Apple's net income in 2025?",
+    "difficulty": "easy",
+    "expected": "Apple's net income was approximately $93,736 million",
+    "generated": "Information not found in financial records.",
+    "keyword_score": 0.0,
+    "llm_judge_score": 0.0,
+    "llm_judge_verdict": "incorrect",
+    "llm_judge_rationale": "The generated answer does not provide the expected information and fails to acknowledge the expected net income figure.",
+    "latency_sec": 1.89
+  },
+  {
+    "question": "What was Apple's stock performance compared to S&P 500 in 2025?",
+    "difficulty": "easy",
+    "expected": "Apple stock reached $234 versus S&P 500 at $217, based on $100 invested in 2020",
+    "generated": "In 2025, Apple's stock performance showed a cumulative total shareholder return of $234 for an initial investment of $100 made in 2020. In comparison, the S&P 500 Index had a cumulative total shareholder return of $217 for the same initial investment. This indicates that Apple outperformed the S&P 500 by $17 in cumulative returns over the five-year period from 2020 to 2025 (Source: [Apple_2025.pdf], Page: 23). \n\nThis performance suggests that Apple's stock not only increased in value but did so at a rate that exceeded the broader market represented by the S&P 500 Index during this timeframe.",
+    "keyword_score": 0.5714285714285714,
+    "llm_judge_score": 1.0,
+    "llm_judge_verdict": "correct",
+    "llm_judge_rationale": "The generated answer accurately reflects the expected stock performance of Apple compared to the S&P 500 in 2025, with no errors or omissions.",
+    "latency_sec": 3.07
+  },
+  {
+    "question": "How did Apple's R&D spending change from 2023 to 2025?",
+    "difficulty": "hard",
+    "expected": "R&D increased from $29,915 million in 2023 to $31,370 million in 2024 to $34,550 million in 2025",
+    "generated": "Apple's Research and Development (R&D) spending increased from 2023 to 2025. In 2023, the R&D expense was reported as $29,915 million. By 2025, this figure had risen, although the exact amount for 2025 is not specified in the provided data. The growth in R&D expense during this period was primarily driven by increases in headcount-related expenses and infrastructure-related costs (Source: [Apple_2025.pdf], Page: 27). \n\nHowever, without the specific R&D spending figure for 2025, we cannot quantify the exact change in spending. Therefore, while we know there was an increase, the precise amount of that increase remains unspecified.",
+    "keyword_score": 0.3,
+    "llm_judge_score": 0.5,
+    "llm_judge_verdict": "partial",
+    "llm_judge_rationale": "The answer correctly states the R&D spending for 2023 but fails to provide the specific amount for 2025, which is a key point.",
+    "latency_sec": 3.18
+  },
+  {
+    "question": "How much did Apple spend on share repurchases in 2025?",
+    "difficulty": "medium",
+    "expected": "Apple repurchased 402 million shares for $89.3 billion",
+    "generated": "Apple spent $89.3 billion on share repurchases in 2025 (Source: Apple_2025.pdf, Page: 49).",
+    "keyword_score": 0.3333333333333333,
+    "llm_judge_score": 0.5,
+    "llm_judge_verdict": "partial",
+    "llm_judge_rationale": "The answer provides the total amount spent but omits the number of shares repurchased, which is a key point.",
+    "latency_sec": 1.31
+  },
+  {
+    "question": "What was Apple's total term debt principal?",
+    "difficulty": "medium",
+    "expected": "Total term debt principal was $91,281 million",
+    "generated": "Apple's total term debt principal was $91.281 billion (Source: Apple_2025.pdf, Page: 49).",
+    "keyword_score": 0.3333333333333333,
+    "llm_judge_score": 1.0,
+    "llm_judge_verdict": "correct",
+    "llm_judge_rationale": "The generated answer accurately reflects the expected answer with correct figures and source citation.",
+    "latency_sec": 1.05
+  },
+  {
+    "question": "What products and services does Apple offer?",
+    "difficulty": "medium",
+    "expected": "iPhone, Mac, iPad, wearables and accessories, and services including advertising, AppleCare, cloud, digital content, payment services",
+    "generated": "Apple offers a diverse range of products and services categorized into several key areas:\n\n1. **Products**:\n   - **iPhone**: This includes various models such as iPhone 17 Pro, iPhone Air\u2122, iPhone 17, iPhone 16, and iPhone 16e (Source: [Apple_2025.pdf], Page: 3).\n   - **Mac**: The Mac line consists of personal computers, including laptops like MacBook Air\u00ae and MacBook Pro\u00ae, as well as desktops such as iMac\u00ae, Mac mini\u00ae, Mac Studio\u00ae, and Mac Pro\u00ae (Source: [Apple_2025.pdf], Page: 3).\n   - **iPad**: This includes multipurpose tablets like iPad Pro\u00ae, iPad Air\u00ae, iPad, and iPad mini\u00ae (Source: [Apple_2025.pdf], Page: 3).\n   - **Wearables, Home and Accessories**: This category features smartwatches (Apple Watch\u00ae Series 11, Apple Watch SE\u00ae 3, Apple Watch Ultra\u00ae 3), wireless headphones (AirPods\u00ae, AirPods Pro\u00ae, AirPods Max\u00ae, and Beats\u00ae), and the Apple Vision Pro\u2122 (Source: [Apple_2025.pdf], Page: 3).\n\n2. **Services**:\n   - **Advertising**: Apple provides advertising services through third-party licensing arrangements and its own advertising platforms (Source: [Apple_2025.pdf], Page: 4).\n   - **AppleCare**: This includes fee-based service and support products that offer priority access to technical support and repair services, along with additional coverage for accidental damage or theft, depending on the product and location (Source: [Apple_2025.pdf], Page: 4).\n   - **Cloud Services**: Apple\u2019s cloud services ensure that customers' content is stored and synchronized across multiple devices (Source: [Apple_2025.pdf], Page: 4).\n   - **Digital Content**: Apple operates platforms like the App Store\u00ae for downloading applications and digital content, including books, music, videos, games, and podcasts (Source: [Apple_2025.pdf], Page: 4).\n   - **Subscription Services**: These include Apple Arcade\u00ae (gaming), Apple Fitness+\u00ae (fitness), Apple Music\u00ae (music streaming), Apple News+\u00ae (news and magazines), and Apple TV\u00ae (original content and live sports) (Source: [Apple_2025.pdf], Page: 4).\n   - **Payment Services**: Apple offers payment solutions such as Apple Card\u00ae (a co-branded credit card) and Apple Pay\u00ae (a cashless payment service) (Source: [Apple_2025.pdf], Page: 4).\n\nOverall, Apple's offerings encompass a wide range of consumer electronics and digital services, catering to various aspects of technology and entertainment.",
+    "keyword_score": 0.875,
+    "llm_judge_score": 0.5,
+    "llm_judge_verdict": "partial",
+    "llm_judge_rationale": "The answer includes many correct products and services but misses mentioning some key points like the specific mention of 'accessories' and does not clearly state the full range of services.",
+    "latency_sec": 13.62
+  },
+  {
+    "question": "What is Apple's policy on remote work?",
+    "difficulty": "unanswerable",
+    "expected": "Information not found in financial records.",
+    "generated": "Information not found in financial records.",
+    "keyword_score": 1.0,
+    "llm_judge_score": 1.0,
+    "llm_judge_verdict": "correct",
+    "llm_judge_rationale": "The generated answer correctly states that the information is not found in financial records.",
+    "latency_sec": 0.78
+  },
+  {
+    "question": "Who is Apple's biggest competitor?",
+    "difficulty": "unanswerable",
+    "expected": "Information not found in financial records.",
+    "generated": "Information not found in financial records.",
+    "keyword_score": 1.0,
+    "llm_judge_score": 1.0,
+    "llm_judge_verdict": "correct",
+    "llm_judge_rationale": "The generated answer correctly states that the information is not found in financial records.",
+    "latency_sec": 0.72
+  },
+  {
+    "question": "What is the capital of France?",
+    "difficulty": "unanswerable",
+    "expected": "Information not found in financial records.",
+    "generated": "Information not found in financial records.",
+    "keyword_score": 1.0,
+    "llm_judge_score": 1.0,
+    "llm_judge_verdict": "correct",
+    "llm_judge_rationale": "The answer correctly states that the information is not found in financial records.",
+    "latency_sec": 0.74
+  }
+]

@@ -12,23 +12,28 @@ def load_pdf(file_path: str, metadata: dict = None) -> list[Document]:
     
     with pdfplumber.open(file_path) as pdf:
         for i, page in enumerate(pdf.pages):
-            text = page.extract_text()
-            if text:
+            try:
+                text = page.extract_text()
+                if text:
                 # Remove common browser PDF headers (date/time + filename pattern)
-                text = re.sub(r'\d{2}/\d{2}/\d{4},\s*\d{2}:\d{2}\s*\S+', '', text).strip() 
-
-                page_metadata = {
-                    "source": file_path,
-                    "page": i,
-                    "total_pages": len(pdf.pages),
-                }
-                if metadata:
-                    page_metadata.update(metadata)
-                
-                pages.append(Document(
-                    page_content=text,
-                    metadata=page_metadata
-                ))
+                    text = re.sub(r'\d{2}/\d{2}/\d{4},\s*\d{2}:\d{2}\s*\S+', '', text).strip() 
+     
+                    page_metadata = {
+                        "source": file_path,
+                        "page": i + 1,
+                        "total_pages": len(pdf.pages),
+                    }
+                    if metadata:
+                        page_metadata.update(metadata)
+                    
+                    pages.append(Document(
+                        page_content=text,
+                        metadata=page_metadata
+                    ))
+                    
+            except Exception as e:
+                print(f"Skippoing page {i+1} due to error : {e}")
+                continue
     
     return pages
 

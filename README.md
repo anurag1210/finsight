@@ -359,3 +359,47 @@ concurrent pressure.
 
 **Response Time Charts:**
 ![Locust Charts](docs/screenshot/Locust_Charts.png)
+
+## 🔐 Authentication
+
+The FinSight FastAPI layer is protected with API key authentication. All requests 
+to the `/query` endpoint must include a valid API key in the request header.
+
+### How it works
+- Valid API key → `200 OK` with answer
+- Missing or invalid key → `403 Not Authenticated`
+- `/health` endpoint remains public — no key required
+- Key stored securely in `.env` — never hardcoded in source code
+
+### Setup
+Generate a secure API key:
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+
+Add to your `.env` file:
+```bash
+FINSIGHT_API_KEY=your-generated-key-here
+```
+
+### Making authenticated requests
+
+**Without API key — blocked:**
+
+![Curl Not Authenticated](docs/screenshot/Curl_NotOKResponse.jpeg)
+
+**With API key — success:**
+
+![Curl Authenticated](docs/screenshot/Curl_OKResponse.jpeg)
+
+### Swagger UI Authentication
+
+FastAPI automatically integrates API key auth into the Swagger UI at `http://localhost:8000/docs`
+
+**Step 1 — Click Authorize and enter your API key:**
+
+![Swagger Lock](docs/screenshot/Swagger_UI_Lock.jpeg)
+
+**Step 2 — Execute requests — key included automatically:**
+
+![Swagger Response](docs/screenshot/Swagger_Response.jpeg)

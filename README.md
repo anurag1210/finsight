@@ -2,7 +2,7 @@
 
 An end-to-end RAG (Retrieval-Augmented Generation) system that enables business professionals to query SEC 10-K financial filings using natural language. Instead of manually reading 200-page annual reports, users ask questions and receive accurate, cited answers in seconds.
 
-![Streamlit UI](docs/screenshots/finsight_ui.png)
+![Streamlit UI](docs/screenshot/finsight_ui.png)
 
 ## What It Does
 
@@ -285,7 +285,7 @@ and traces every LangChain component call to LangSmith.
 
 ### Dashboard
 
-![LangSmith Dashboard](figures/langsmith_dashboard.png)
+![LangSmith Dashboard](docs/screenshot/langsmith_dashboard.png)
 
 
 ##########LOAD TESTING with LOCUST##############################

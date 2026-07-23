@@ -285,7 +285,7 @@ and traces every LangChain component call to LangSmith.
 
 ### Dashboard
 
-![LangSmith Dashboard](docs/screenshot/langsmith_dashboard.png)
+![LangSmith Dashboard](https://github.com/anurag1210/finsight/raw/main/docs/screenshot/LangSmith_Observability.png)
 
 
 ##########LOAD TESTING with LOCUST##############################

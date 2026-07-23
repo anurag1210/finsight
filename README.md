@@ -112,8 +112,12 @@ finsight/
 │   │   ├── routes.py                # API endpoints
 │   │   └── models.py                # Pydantic schemas
 │   └── security/
-│       ├── input_guard.py           # Prompt injection prevention
-│       └── output_guard.py          # Response safety checks
+│   |   ├── input_guard.py           # Prompt injection prevention
+│   |   └── output_guard.py          # Response safety checks
+├── |
+│   ├── cache/
+│   │   ├── __init__.py
+│   │   └── semantic_cache.py       # Redis semantic caching
 ├── ui/
 │   └── app.py                       # Streamlit chat interface
 ├── data/
@@ -122,7 +126,7 @@ finsight/
 ├── evaluation_results/              # Evaluation reports
 ├── docs/
 │   ├── ARCHITECTURE.md              # Architecture Decision Records
-│   └── screenshots/                 # UI screenshots
+│   └── screenshot/                 # UI screenshots
 └── tests/                           # Unit tests
 ```
 
@@ -437,32 +441,36 @@ wrong cached answer about revenue figures is worse than a slightly slower correc
 
 ### Architecture
 
-┌─────────────────────────────────────────────┐
-│ FastAPI /query │
-└─────────────────┬───────────────────────────┘
-│
-▼
-┌─────────────────────────────────────────────┐
-│ Redis Semantic Cache │
-│ • Embed query │
-│ • Compare cosine similarity │
-│ • Threshold: 0.92 │
-│ • TTL: 24 hours │
-└──────┬──────────────────────┬───────────────┘
-│ │
-Cache HIT Cache MISS
-(~114ms) │
-│ ▼
-│ ┌────────────────────────┐
-│ │ Full RAG Pipeline │
-│ │ ChromaDB → OpenAI LLM │
-│ └────────────┬───────────┘
-│ │
-└──────────────────────┘
-│
-▼
-Return Answer
+### Architecture
 
+```mermaid
+flowchart TD
+    A([🔍 User Query]) --> B[FastAPI /query]
+    B --> C{API Key Valid?}
+    C -->|❌ Invalid| D([403 Forbidden])
+    C -->|✅ Valid| E[Input Guardrail Check]
+    E -->|❌ Blocked| F([400 Bad Request])
+    E -->|✅ Safe| G[Redis Semantic Cache]
+    
+    G --> H{Cosine Similarity > 0.92?}
+    H -->|✅ Cache HIT| I([⚡ Return Cached Answer\n~114ms])
+    H -->|❌ Cache MISS| J[ChromaDB Retrieval\nTop-5 chunks]
+    
+    J --> K[OpenAI LLM Generation\ngpt-4o-mini]
+    K --> L[Output Guardrail Check]
+    L -->|❌ Blocked| M([500 Unsafe Response])
+    L -->|✅ Safe| N[Store in Redis\nTTL: 24 hours]
+    N --> O([✅ Return Answer with Citations])
+
+    style A fill:#4A90D9,color:#fff
+    style D fill:#E74C3C,color:#fff
+    style F fill:#E74C3C,color:#fff
+    style M fill:#E74C3C,color:#fff
+    style I fill:#27AE60,color:#fff
+    style O fill:#27AE60,color:#fff
+    style G fill:#F39C12,color:#fff
+    style H fill:#F39C12,color:#fff
+```
 
 ### Performance Results
 

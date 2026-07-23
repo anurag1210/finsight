@@ -288,7 +288,7 @@ and traces every LangChain component call to LangSmith.
 ![LangSmith Dashboard](docs/screenshot/LangSmith_Observability.png)
 
 
-##########LOAD TESTING with LOCUST##############################
+-------LOAD TESTING with LOCUST--------
 
 
 ## ⚡ Load Testing with Locust
@@ -312,10 +312,10 @@ Open `http://localhost:8089` to access the Locust UI.
 
 ### Results
 
-| Endpoint | Requests | Failures | Median (ms) | 95th %ile (ms) | Avg (ms) |
-|----------|----------|----------|-------------|----------------|----------|
-| GET /health | 24 | 0 | 6,500 | 14,000 | 8,433 |
-| POST /query | 258 | 41 | 13,000 | 32,000 | 14,157 |
+| Endpoint    | Requests | Failures | Median (ms) | 95th %ile (ms) | Avg (ms) |
+|-------------|----------|----------|-------------|----------------|----------|
+| GET /health | 14       | 0        | 12,000      | 22,000         | 12,386   |
+| POST /query | 178      | 27       | 12,000      | 30,000         | 12,542   |
 
 ### Key Findings
 
@@ -438,8 +438,6 @@ Two queries can mean the same thing but be worded differently:
 
 The 0.92 threshold is deliberately conservative for financial data — returning a 
 wrong cached answer about revenue figures is worse than a slightly slower correct answer.
-
-### Architecture
 
 ### Architecture
 

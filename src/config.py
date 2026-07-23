@@ -25,3 +25,8 @@ CHUNK_OVERLAP = 200
 # Retrieval Settings, picks the top K most relevant chunks to be used as context for the LLM
 TOP_K = 5
 
+# Redis Semantic Cache Settings
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
+REDIS_TTL = int(os.getenv("REDIS_TTL", 86400))  # 24 hours in seconds
+CACHE_SIMILARITY_THRESHOLD = float(os.getenv("CACHE_SIMILARITY_THRESHOLD", 0.92))

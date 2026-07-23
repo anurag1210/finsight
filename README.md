@@ -403,3 +403,157 @@ FastAPI automatically integrates API key auth into the Swagger UI at `http://loc
 **Step 2 — Execute requests — key included automatically:**
 
 ![Swagger Response](docs/screenshot/Swagger_Response.jpeg)
+
+
+## ⚡ Redis Semantic Caching
+
+### Overview
+FinSight implements Redis semantic caching to eliminate redundant OpenAI API calls 
+for semantically similar queries. Instead of calling the LLM for every request, 
+the system checks Redis first — if a similar question has been answered before, 
+the cached response is returned instantly.
+
+### How It Works
+
+Query arrives
+↓
+Embed the query (OpenAI text-embedding-3-small)
+↓
+Check Redis — any cached query with cosine similarity > 0.92?
+↓
+YES → Return cached answer instantly (~114ms) ✅
+↓
+NO → ChromaDB retrieval → LLM generation → Cache result → Return answer
+
+
+### Why Cosine Similarity?
+Two queries can mean the same thing but be worded differently:
+- "What is AppleCare?" 
+- "What is AppleCare?" → similarity: 1.000 → Cache HIT ✅
+- "Tell me about AppleCare" → similarity: ~0.89 → Cache MISS ❌ (below threshold)
+
+The 0.92 threshold is deliberately conservative for financial data — returning a 
+wrong cached answer about revenue figures is worse than a slightly slower correct answer.
+
+### Architecture
+
+┌─────────────────────────────────────────────┐
+│ FastAPI /query │
+└─────────────────┬───────────────────────────┘
+│
+▼
+┌─────────────────────────────────────────────┐
+│ Redis Semantic Cache │
+│ • Embed query │
+│ • Compare cosine similarity │
+│ • Threshold: 0.92 │
+│ • TTL: 24 hours │
+└──────┬──────────────────────┬───────────────┘
+│ │
+Cache HIT Cache MISS
+(~114ms) │
+│ ▼
+│ ┌────────────────────────┐
+│ │ Full RAG Pipeline │
+│ │ ChromaDB → OpenAI LLM │
+│ └────────────┬───────────┘
+│ │
+└──────────────────────┘
+│
+▼
+Return Answer
+
+
+### Performance Results
+
+Load tested with Locust — 10 concurrent users, same fixed question set.
+
+| Metric | Without Cache | With Cache | Improvement |
+|--------|--------------|------------|-------------|
+| Median response | 11,000ms | 240ms | **98% faster** |
+| 95th percentile | 27,000ms | 830ms | **97% faster** |
+| Average response | 11,887ms | 367ms | **97% faster** |
+| Failure rate | 15% | 0% | **100% eliminated** |
+| Throughput | 246 requests | 2,018 requests | **8x increase** |
+| Min response | 588ms | 114ms | **81% faster** |
+
+### Screenshots
+
+**Before Redis Caching:**
+
+![Before Cache](docs/screenshot/Before_Cache.jpeg)
+
+**After Redis Caching:**
+
+![After Cache](docs/screenshot/After_Cache.jpeg)
+
+### Key Findings
+
+**Speed:** Median response time dropped from 11 seconds to 240 milliseconds — 
+a 98% improvement driven by cache hits returning in ~114ms vs 7-12 second 
+OpenAI API calls.
+
+**Reliability:** Failure rate dropped from 15% to 0%. Without caching, 
+concurrent users competed for OpenAI API capacity causing connection timeouts. 
+With caching, 95%+ of requests return too fast to timeout.
+
+**Throughput:** The same 10 users handled 8x more requests in the same timeframe 
+because cache hits free up capacity immediately rather than holding connections 
+open for seconds.
+
+### Setup
+
+**1. Install and start Redis:**
+```bash
+brew install redis
+brew services start redis
+redis-cli ping  # should return PONG
+```
+
+**2. Install Python Redis client:**
+```bash
+pip install redis
+```
+
+**3. Add to .env:**
+```bash
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_TTL=86400
+CACHE_SIMILARITY_THRESHOLD=0.92
+```
+
+**4. Verify cache is working:**
+```bash
+# Check cached entries
+redis-cli keys "finsight:cache:*"
+
+# View a cached entry
+redis-cli get "finsight:cache:<key>"
+
+# Clear all cache
+redis-cli keys "finsight:cache:*" | xargs redis-cli del
+```
+
+### Implementation Details
+
+- **Embedding model:** `text-embedding-3-small` (1,536 dimensions) — same model 
+  used by ChromaDB for document retrieval, ensuring consistent semantic space
+- **Similarity metric:** Cosine similarity — measures angle between vectors, 
+  not distance, making it robust to query length variation
+- **TTL:** 24 hours — SEC filings don't change daily but stale data shouldn't 
+  persist indefinitely
+- **Key namespace:** `finsight:cache:*` — namespaced to avoid collision with 
+  other Redis data in production
+- **Cache scope:** Both `generate_response` (FastAPI) and `generate_response_stream` 
+  (Streamlit) are cached — full pipeline coverage
+
+### Production Considerations
+
+- Switch from `redis_client.keys()` to `redis_client.scan_iter()` for large 
+  keyspaces — `keys()` blocks Redis on millions of entries
+- Use Redis Stack with native Vector Search module for O(log n) similarity 
+  search vs current O(n) loop
+- Add Prometheus metrics for cache hit rate monitoring
+- Consider lower threshold (0.88) for non-financial domains where precision 
+  matters less than hit rate

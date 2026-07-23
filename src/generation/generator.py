@@ -1,7 +1,8 @@
 #Adding generator part to generate the output of the RAG
 from langchain_openai import ChatOpenAI
-from src.config import LLM_MODEL,OPENAI_API_KEY,MAX_TOKENS,LLM_TEMPERATURE
-from src.generation.prompt_templates import SYSTEM_PROMPT,formatting_retrieval,get_user_content
+from src.config import LLM_MODEL, OPENAI_API_KEY, MAX_TOKENS, LLM_TEMPERATURE
+from src.generation.prompt_templates import SYSTEM_PROMPT, formatting_retrieval, get_user_content
+from src.cache.semantic_cache import get_cached_response, cache_response
 
 #Function to generate the output response from the LLM
 def reform_query(query: str, chat_history: list, llm) -> str:
@@ -10,7 +11,7 @@ def reform_query(query: str, chat_history: list, llm) -> str:
     
     history_text = "\n".join(
         f"{m['role'].upper()}: {m['content']}" 
-        for m in chat_history[-4:]  # last 2 exchanges only
+        for m in chat_history[-4:]
     )
     
     reformation_prompt = f"""Given this conversation history:
@@ -27,6 +28,12 @@ Follow-up query: {query}"""
 
 
 def generate_response(query: str, chat_history: list = []) -> str:
+    
+    # Check cache first
+    cached = get_cached_response(query)
+    if cached:
+        return cached
+
     llm = ChatOpenAI(
         model=LLM_MODEL,
         api_key=OPENAI_API_KEY,
@@ -34,10 +41,7 @@ def generate_response(query: str, chat_history: list = []) -> str:
         max_tokens=MAX_TOKENS,
     )
 
-    # ADD THIS LINE — reform before hitting retriever
     reformed_query = reform_query(query, chat_history, llm)
-
-    # CHANGE query to reformed_query in these two lines
     context = formatting_retrieval(reformed_query)
     user_content = get_user_content(context, reformed_query)
     
@@ -46,10 +50,22 @@ def generate_response(query: str, chat_history: list = []) -> str:
         ("human", user_content),
     ]
     response = llm.invoke(messages)
-    return response.content
+    answer = response.content
+
+    # Store in cache
+    cache_response(query, answer)
+
+    return answer
 
 
 def generate_response_stream(query: str, chat_history: list = []):
+    
+    # Check cache first
+    cached = get_cached_response(query)
+    if cached:
+        yield cached
+        return
+
     llm = ChatOpenAI(
         model=LLM_MODEL,
         api_key=OPENAI_API_KEY,
@@ -67,14 +83,17 @@ def generate_response_stream(query: str, chat_history: list = []):
         ("human", user_content),
     ]
 
+    # Collect chunks to cache the full response
+    full_response = ""
     for chunk in llm.stream(messages):
+        full_response += chunk.content
         yield chunk.content
 
-
+    # Store complete response in cache
+    cache_response(query, full_response)
 
 
 if __name__ == "__main__":
-      query = input("Input a financial query: ")
-      answer = generate_response(query)
-      print(answer)
-   
+    query = input("Input a financial query: ")
+    answer = generate_response(query)
+    print(answer)

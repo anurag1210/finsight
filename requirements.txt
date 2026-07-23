@@ -16,3 +16,4 @@ langchain-chroma
 openai
 pysqlite3-binary; sys_platform == "darwin"
 langchain-chroma
+redis>=5.0.0

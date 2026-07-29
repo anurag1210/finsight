@@ -3,6 +3,7 @@
 import json
 import numpy as np
 import redis
+import hashlib
 from openai import OpenAI
 from src.config import (
     OPENAI_API_KEY,
@@ -49,7 +50,7 @@ def get_cached_response(query: str) -> str | None:
     query_embedding = get_embedding(query)
 
     # Get all cached keys
-    cached_keys = redis_client.keys("finsight:cache:*")
+    cached_keys = redis_client.scan_iter(match="finsight:cache:*",count=100)
 
     best_similarity = 0.0
     best_answer = None
@@ -89,7 +90,7 @@ def cache_response(query: str, answer: str) -> None:
     })
 
     # Use query hash as key
-    import hashlib
+   
     key = f"finsight:cache:{hashlib.md5(query.encode()).hexdigest()}"
 
     redis_client.setex(key, REDIS_TTL, cache_data)
@@ -99,7 +100,7 @@ def cache_response(query: str, answer: str) -> None:
 
 def clear_cache() -> int:
     """Clear all cached responses. Returns number of keys deleted."""
-    keys = redis_client.keys("finsight:cache:*")
+    keys = list(redis_client.scan_iter(match="finsight:cache:*", count=100))
     if keys:
         return redis_client.delete(*keys)
     return 0

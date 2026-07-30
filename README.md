@@ -563,3 +563,11 @@ redis-cli keys "finsight:cache:*" | xargs redis-cli del
 - Add Prometheus metrics for cache hit rate monitoring
 - Consider lower threshold (0.88) for non-financial domains where precision 
   matters less than hit rate
+
+
+## Changelog
+| Redis — `scan_iter()` vs `KEYS` (Semantic Cache) | [`SKILLS-LEARNING.md`](./SKILLS-LEARNING.md#redis--scan-scan_iter-vs-keys) | ✅ 30 Jul 2026 |
+
+
+### 30 Jul 2026
+- **Redis `scan_iter()` refactor** — replaced blocking `keys()` with `scan_iter()` in `src/cache/semantic_cache.py`. Fixed generator unpacking issue in `clear_cache()`. Smoke tested against local Redis — cache write, HIT retrieval, and clear all verified.

@@ -1,8 +1,8 @@
 #Adding generator part to generate the output of the RAG
 from langchain_openai import ChatOpenAI
-from src.config import LLM_MODEL, OPENAI_API_KEY, MAX_TOKENS, LLM_TEMPERATURE
 from src.generation.prompt_templates import SYSTEM_PROMPT, formatting_retrieval, get_user_content
 from src.cache.semantic_cache import get_cached_response, cache_response
+from src.config import OPENAI_API_KEY, LLM_MODEL, MAX_TOKENS, LLM_TEMPERATURE, ENV
 
 #Function to generate the output response from the LLM
 def reform_query(query: str, chat_history: list, llm) -> str:
@@ -39,7 +39,10 @@ def generate_response(query: str, chat_history: list = []) -> str:
         api_key=OPENAI_API_KEY,
         temperature=LLM_TEMPERATURE,
         max_tokens=MAX_TOKENS,
+        store=True,
+        metadata={"project": "finsight", "env": ENV}
     )
+
 
     reformed_query = reform_query(query, chat_history, llm)
     context = formatting_retrieval(reformed_query)
@@ -72,6 +75,8 @@ def generate_response_stream(query: str, chat_history: list = []):
         temperature=LLM_TEMPERATURE,
         max_tokens=MAX_TOKENS,
         streaming=True,
+        store=True,
+        metadata={"project": "finsight", "env": ENV}
     )
 
     reformed_query = reform_query(query, chat_history, llm)

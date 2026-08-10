@@ -571,3 +571,9 @@ redis-cli keys "finsight:cache:*" | xargs redis-cli del
 
 ### 30 Jul 2026
 - **Redis `scan_iter()` refactor** — replaced blocking `keys()` with `scan_iter()` in `src/cache/semantic_cache.py`. Fixed generator unpacking issue in `clear_cache()`. Smoke tested against local Redis — cache write, HIT retrieval, and clear all verified.
+
+### 10 Aug 2026
+- **OpenAI Completions Logging (`store=True`)** — added `store=True` and environment 
+  metadata tagging to all `ChatOpenAI` calls in `generator.py`. Completions now visible 
+  in OpenAI dashboard (Logs → Completions) with `project=finsight, env=dev` tags. 
+  Sits alongside LangSmith as a second observability layer.

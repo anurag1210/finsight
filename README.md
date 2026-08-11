@@ -577,3 +577,9 @@ redis-cli keys "finsight:cache:*" | xargs redis-cli del
   metadata tagging to all `ChatOpenAI` calls in `generator.py`. Completions now visible 
   in OpenAI dashboard (Logs → Completions) with `project=finsight, env=dev` tags. 
   Sits alongside LangSmith as a second observability layer.
+
+### 11 Aug 2026
+- **Role-play injection pattern expansion** — added 5 new suspicious patterns 
+  to `input_guard.py` covering authority identity attacks ("assume i am", 
+  "pretend i am", "as the ceo", "speaking as the", "in my role as"). 
+  All patterns verified blocking correctly, legitimate queries unaffected.

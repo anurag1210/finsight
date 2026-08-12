@@ -588,3 +588,9 @@ redis-cli keys "finsight:cache:*" | xargs redis-cli del
 - **Rate limiting on `/query`** — added slowapi 10 requests/minute per IP. 
   Blocked requests return 429 and never reach the LLM — no OpenAI cost incurred. 
   Verified: requests 1-10 return 200, requests 11-12 return 429.
+
+### 12 Aug 2026
+- **Retry logic with exponential backoff** — added tenacity `@retry` decorator 
+  to `_invoke_llm_with_retry()` in `generator.py`. Retries on RateLimitError 
+  and APIStatusError with 1s → 2s → 4s backoff, max 3 attempts. before_sleep 
+  logging on each retry attempt for production visibility.

@@ -4,6 +4,28 @@ from src.generation.prompt_templates import SYSTEM_PROMPT, formatting_retrieval,
 from src.cache.semantic_cache import get_cached_response, cache_response
 from src.config import OPENAI_API_KEY, LLM_MODEL, MAX_TOKENS, LLM_TEMPERATURE, ENV
 
+from openai import RateLimitError, APIStatusError
+
+#Added the retry logic 
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+import logging
+
+logger = logging.getLogger(__name__)
+
+@retry(
+    retry=retry_if_exception_type((RateLimitError, APIStatusError)),
+    wait=wait_exponential(multiplier=1, min=1, max=8),
+    stop=stop_after_attempt(3),
+    reraise=True,
+    before_sleep=lambda retry_state: logger.warning(
+        f"OpenAI call failed — retrying attempt {retry_state.attempt_number}/3..."
+    )
+)
+def _invoke_llm_with_retry(llm, messages):
+    """LLM call with exponential backoff retry on transient errors."""
+    return llm.invoke(messages)
+
+
 #Function to generate the output response from the LLM
 def reform_query(query: str, chat_history: list, llm) -> str:
     if not chat_history:
@@ -52,7 +74,8 @@ def generate_response(query: str, chat_history: list = []) -> str:
         ("system", SYSTEM_PROMPT),
         ("human", user_content),
     ]
-    response = llm.invoke(messages)
+    #Added the changes for retry logic
+    response = _invoke_llm_with_retry(llm, messages)
     answer = response.content
 
     # Store in cache

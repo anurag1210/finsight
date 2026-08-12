@@ -14,6 +14,6 @@ pdfplumber==0.10.3
 langchain-text-splitters
 langchain-chroma
 openai
-pysqlite3-binary; sys_platform == "darwin"
 langchain-chroma
 redis>=5.0.0
+slowapi==0.1.9

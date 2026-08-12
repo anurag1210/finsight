@@ -1,10 +1,15 @@
 
-from fastapi import APIRouter, HTTPException, Security, Depends
 from fastapi.security import APIKeyHeader
 from src.api.models import QueryRequest, QueryResponse
 from src.generation.generator import generate_response
 from src.security.input_guard import quick_check as input_quick_check
 from src.security.output_guard import check_output as output_quick_check
+from fastapi import APIRouter, HTTPException, Security, Depends, Request
+
+
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+
 import os
 from dotenv import load_dotenv
 
@@ -12,6 +17,8 @@ load_dotenv()
 
 router = APIRouter()
 
+#Applying the rate limitting logic here
+limiter = Limiter(key_func=get_remote_address)
 
 api_key_header = APIKeyHeader(name="X-API-Key")
 async def verify_api_key(api_key: str = Security(api_key_header)):
@@ -20,7 +27,8 @@ async def verify_api_key(api_key: str = Security(api_key_header)):
 
 
 @router.post("/query", response_model=QueryResponse, dependencies=[Depends(verify_api_key)])
-async def query(req: QueryRequest) -> QueryResponse:
+@limiter.limit("10/minute")
+async def query(request: Request,req: QueryRequest) -> QueryResponse:
     is_safe, message = input_quick_check(req.query) 
     if not is_safe:
         raise HTTPException(status_code=400, detail=message)

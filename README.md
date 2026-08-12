@@ -583,3 +583,8 @@ redis-cli keys "finsight:cache:*" | xargs redis-cli del
   to `input_guard.py` covering authority identity attacks ("assume i am", 
   "pretend i am", "as the ceo", "speaking as the", "in my role as"). 
   All patterns verified blocking correctly, legitimate queries unaffected.
+
+### 12 Aug 2026
+- **Rate limiting on `/query`** — added slowapi 10 requests/minute per IP. 
+  Blocked requests return 429 and never reach the LLM — no OpenAI cost incurred. 
+  Verified: requests 1-10 return 200, requests 11-12 return 429.

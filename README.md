@@ -594,3 +594,9 @@ redis-cli keys "finsight:cache:*" | xargs redis-cli del
   to `_invoke_llm_with_retry()` in `generator.py`. Retries on RateLimitError 
   and APIStatusError with 1s → 2s → 4s backoff, max 3 attempts. before_sleep 
   logging on each retry attempt for production visibility.
+
+### 13 Aug 2026
+- **Hybrid Search (BM25 + Vector + RRF)** — replaced pure semantic search with 
+  hybrid retrieval. BM25Retriever + ChromaDB merged via EnsembleRetriever (RRF). 
+  Verified: 'AAPL stock repurchase program' — semantic returned 5 chunks, 
+  hybrid returned 8. BM25 contribution: 3 additional chunks from keyword matching.

@@ -1,4 +1,4 @@
-from src.retrieval.retriever import retrieve_vectordb
+from src.retrieval.retriever import retrieve_vectordb,retrieve_hybrid
 
 # System prompt with your specific constraints
 SYSTEM_PROMPT = """
@@ -21,8 +21,26 @@ def get_user_content(context, query):
         
 #Function to fetch the result from the retrieval and formats it 
 def formatting_retrieval(query):
-    results = retrieve_vectordb(query)
-    return format_context(results)
+    results = retrieve_hybrid(query)
+    return format_context_hybrid(results)
+
+def format_context_hybrid(results):
+    if not results:
+        return ""
+    lines = []
+    seen = set()
+    for doc in results:
+        source_file = doc.metadata.get("source_file") or doc.metadata.get("source") or "Unknown"
+        page = doc.metadata.get("page")
+        chunk_id = doc.metadata.get("chunk_id")
+        dedupe_key = (source_file, page, chunk_id, doc.page_content[:200])
+        if dedupe_key in seen:
+            continue
+        seen.add(dedupe_key)
+        lines.append(
+            f"[Source: {source_file}, Page: {page}] {doc.page_content}"
+        )
+    return "\n\n".join(lines)
 
 def format_context(results):
     if not results:

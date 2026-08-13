@@ -33,3 +33,11 @@ CACHE_SIMILARITY_THRESHOLD = float(os.getenv("CACHE_SIMILARITY_THRESHOLD", 0.92)
 
 
 ENV = os.getenv("ENV", "dev")  # defaults to dev, set to "prod" in production
+
+#Reranker Configuration
+
+# Reranking
+RERANK_TOP_K = 20        # retrieve wide
+RERANK_FINAL_K = 5       # rerank down to this
+RERANK_MODEL = "BAAI/bge-reranker-base"
+

@@ -1,11 +1,18 @@
 #Code to Retrieve thevector DB embeddings from the user query
 from src.retrieval.vector_store import get_vector_store
-from src.config import TOP_K
+from src.config import TOP_K, RERANK_TOP_K, RERANK_FINAL_K, RERANK_MODEL
 #BM25 retriever logic added
 from langchain_community.retrievers import BM25Retriever
 from langchain_classic.retrievers import EnsembleRetriever
 from langchain_core.documents import Document
 
+#Imports for ReRankers 
+from langchain_classic.retrievers import ContextualCompressionRetriever
+from langchain_classic.retrievers.document_compressors import CrossEncoderReranker
+from langchain_community.cross_encoders import HuggingFaceCrossEncoder
+
+_cross_encoder = HuggingFaceCrossEncoder(model_name=RERANK_MODEL)
+_compressor = CrossEncoderReranker(model=_cross_encoder, top_n=RERANK_FINAL_K)
 
 #Method to retrieve the embeddings from the vector db
 def retrieve_vectordb(user_query,filter=None):
@@ -17,7 +24,7 @@ def retrieve_vectordb(user_query,filter=None):
     
     return results
 
-def retrieve_hybrid(user_query, k=TOP_K):
+def retrieve_hybrid(user_query, k=RERANK_TOP_K):
     """Hybrid retrieval: BM25 keyword + ChromaDB semantic, merged via RRF."""
 
     # Step 1 — get vector store
@@ -45,9 +52,15 @@ def retrieve_hybrid(user_query, k=TOP_K):
         retrievers=[bm25_retriever, vector_retriever],
         weights=[0.5, 0.5]
     )
+    
+    # Step 6 — rerank
+    reranking_retriever = ContextualCompressionRetriever(
+        base_compressor=_compressor,
+        base_retriever=ensemble,
+    )
 
-    # Step 6 — retrieve
-    results = ensemble.invoke(user_query)
+    # Step 7 — retrieve with re-ranking
+    results = reranking_retriever.invoke(user_query)
     return results
 
 

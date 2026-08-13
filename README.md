@@ -600,3 +600,13 @@ redis-cli keys "finsight:cache:*" | xargs redis-cli del
   hybrid retrieval. BM25Retriever + ChromaDB merged via EnsembleRetriever (RRF). 
   Verified: 'AAPL stock repurchase program' — semantic returned 5 chunks, 
   hybrid returned 8. BM25 contribution: 3 additional chunks from keyword matching.
+
+### 13 Aug 2026
+- **Cross-Encoder Reranking** — added second-stage reranking using 
+  `BAAI/bge-reranker-base` (HuggingFace cross-encoder). Hybrid retriever 
+  now fetches top-20 candidates (BM25 + Vector + RRF), cross-encoder 
+  scores each query-chunk pair jointly, returns top-5. Implemented via 
+  LangChain `ContextualCompressionRetriever` wrapping `EnsembleRetriever`. 
+  Model loaded once at module level to avoid per-request overhead. 
+  Added `sentence-transformers` and config constants 
+  (`RERANK_TOP_K=20`, `RERANK_FINAL_K=5`, `RERANK_MODEL`).

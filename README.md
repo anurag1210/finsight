@@ -564,6 +564,27 @@ redis-cli keys "finsight:cache:*" | xargs redis-cli del
 - Consider lower threshold (0.88) for non-financial domains where precision 
   matters less than hit rate
 
+## Evaluation
+
+FinSight uses a three-layer evaluation framework:
+
+| Layer | What it measures | Speed |
+|-------|-----------------|-------|
+| Keyword Matching | Does the answer contain the correct figures? | Instant |
+| LLM-as-Judge | Overall answer quality (1-5 score) | ~2s/query |
+| RAGAS | Diagnostic breakdown — retrieval vs generation failure | ~5s/query |
+
+### RAGAS Baseline (15 queries, Apple 2025 10-K)
+
+| Metric | Score | What it tells you |
+|--------|-------|-------------------|
+| Context Precision | 0.53 | ~half the retrieved chunks are relevant |
+| Context Recall | 0.76 | retriever finds most needed information |
+| Faithfulness | 0.68 | LLM mostly grounds answers in retrieved context |
+
+**Key finding:** Dense financial tables (R&D breakdown, capex in cash flow statements) 
+don't chunk cleanly — identified chunking quality as the primary retrieval bottleneck. 
+Contextual chunking is the next improvement target.
 
 ## Changelog
 | Redis — `scan_iter()` vs `KEYS` (Semantic Cache) | [`SKILLS-LEARNING.md`](./SKILLS-LEARNING.md#redis--scan-scan_iter-vs-keys) | ✅ 30 Jul 2026 |

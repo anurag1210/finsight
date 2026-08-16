@@ -1,46 +1,107 @@
-[{
-    "question": "What was Apple's net income in 2025?",
-    "expected_answer": "Apple's net income was approximately $93,736 million",
-    "difficulty": "easy"
-},
-{
-    "question": "What was Apple's stock performance compared to S&P 500 in 2025?",
-    "expected_answer": "Apple stock reached $234 versus S&P 500 at $217, based on $100 invested in 2020",
-    "difficulty": "easy"
-},
-{
-    "question": "How did Apple's R&D spending change from 2023 to 2025?",
-    "expected_answer": "R&D increased from $29,915 million in 2023 to $31,370 million in 2024 to $34,550 million in 2025",
-    "difficulty": "hard"
-},
-{
-    "question": "How much did Apple spend on share repurchases in 2025?",
-    "expected_answer": "Apple repurchased 402 million shares for $89.3 billion",
-    "difficulty": "medium"
-},
-{
-    "question": "What was Apple's total term debt principal?",
-    "expected_answer": "Total term debt principal was $91,281 million",
-    "difficulty": "medium"
-},
-{
-    "question": "What products and services does Apple offer?",
-    "expected_answer": "iPhone, Mac, iPad, wearables and accessories, and services including advertising, AppleCare, cloud, digital content, payment services",
-    "difficulty": "medium"
-},
-{
-    "question": "What is Apple's policy on remote work?",
-    "expected_answer": "Information not found in financial records.",
-    "difficulty": "unanswerable"
-},
-{
-    "question": "Who is Apple's biggest competitor?",
-    "expected_answer": "Information not found in financial records.",
-    "difficulty": "unanswerable"
-},
-{
-    "question": "What is the capital of France?",
-    "expected_answer": "Information not found in financial records.",
-    "difficulty": "unanswerable"
-}
+[
+    {
+        "question": "What was Apple's net income in 2025?",
+        "expected_answer": "Apple's net income was approximately $112,010 million",
+        "ground_truth": "Apple's net income in 2025 was $112,010 million.",
+        "difficulty": "easy"
+    },
+    {
+        "question": "What was Apple's stock performance compared to S&P 500 in 2025?",
+        "expected_answer": "Apple stock reached $234 versus S&P 500 at $217, based on $100 invested in 2020",
+        "ground_truth": "Apple stock reached $234 versus S&P 500 at $217, based on $100 invested in 2020.",
+        "difficulty": "easy"
+    },
+    {
+        "question": "How did Apple's R&D spending change from 2023 to 2025?",
+        "expected_answer": "R&D increased from $29,915 million in 2023 to $31,370 million in 2024 to $34,550 million in 2025",
+        "ground_truth": "R&D increased from $29,915 million in 2023 to $31,370 million in 2024 to $34,550 million in 2025.",
+        "difficulty": "hard"
+    },
+    {
+        "question": "How much did Apple spend on share repurchases in 2025?",
+        "expected_answer": "Apple repurchased 402 million shares for $89.3 billion",
+        "ground_truth": "Apple repurchased $89.3 billion of its common stock in 2025.",
+        "difficulty": "medium"
+    },
+    {
+        "question": "What was Apple's total term debt principal?",
+        "expected_answer": "Total term debt principal was $91,281 million",
+        "ground_truth": "Total term debt principal was $91,281 million.",
+        "difficulty": "medium"
+    },
+    {
+        "question": "What products and services does Apple offer?",
+        "expected_answer": "iPhone, Mac, iPad, wearables and accessories, and services including advertising, AppleCare, cloud, digital content, payment services",
+        "ground_truth": "iPhone, Mac, iPad, Wearables Home and Accessories, and Services including advertising, AppleCare, cloud services, digital content, and payment services.",
+        "difficulty": "medium"
+    },
+    {
+        "question": "What is Apple's policy on remote work?",
+        "expected_answer": "Information not found in financial records.",
+        "difficulty": "unanswerable"
+    },
+    {
+        "question": "Who is Apple's biggest competitor?",
+        "expected_answer": "Information not found in financial records.",
+        "difficulty": "unanswerable"
+    },
+    {
+        "question": "What is the capital of France?",
+        "expected_answer": "Information not found in financial records.",
+        "difficulty": "unanswerable"
+    },
+    {
+        "question": "What was Apple's total net sales in 2025?",
+        "expected_answer": "Apple's total net sales were $416,161 million",
+        "ground_truth": "Apple's total net sales in 2025 were $416,161 million, a 6% increase from $391,035 million in 2024.",
+        "difficulty": "easy"
+    },
+    {
+        "question": "What was iPhone revenue in 2025?",
+        "expected_answer": "iPhone net sales were $209,590 million",
+        "ground_truth": "iPhone net sales in 2025 were $209,590 million, representing 50.4% of total revenue.",
+        "difficulty": "easy"
+    },
+    {
+        "question": "What was Apple's total cash, cash equivalents and marketable securities?",
+        "expected_answer": "Cash, cash equivalents and marketable securities totaled $132.4 billion",
+        "ground_truth": "Apple's cash, cash equivalents and marketable securities totaled $132.4 billion as of September 27, 2025.",
+        "difficulty": "medium"
+    },
+    {
+        "question": "What dividend per share did Apple declare in 2025?",
+        "expected_answer": "Apple's quarterly cash dividend was $0.26 per share",
+        "ground_truth": "Apple's quarterly cash dividend was $0.26 per share, increased from $0.25, totaling $1.02 per share for the fiscal year.",
+        "difficulty": "medium"
+    },
+    {
+        "question": "What were Apple's total operating expenses in 2025?",
+        "expected_answer": "Total operating expenses were $62,151 million",
+        "ground_truth": "Total operating expenses in 2025 were $62,151 million, comprising $34,550 million in R&D and $27,601 million in selling, general and administrative expenses.",
+        "difficulty": "medium"
+    },
+    {
+        "question": "What was Apple's gross margin in 2025?",
+        "expected_answer": "Gross margin was $195,201 million at 46.9%",
+        "ground_truth": "Apple's gross margin in 2025 was $195,201 million, with a gross margin percentage of 46.9%.",
+        "difficulty": "medium"
+    },
+    {
+        "question": "How much revenue did Apple generate from Greater China?",
+        "expected_answer": "Greater China net sales were $64,377 million",
+        "ground_truth": "Greater China net sales were $64,377 million in 2025, a 4% decrease from $66,952 million in 2024.",
+        "difficulty": "medium"
+    },
+    {
+        "question": "What were Apple's capital expenditures in 2025?",
+        "expected_answer": "Apple invested $12.7 billion in capital expenditures",
+        "ground_truth": "Apple invested $12.7 billion in capital expenditures during fiscal year 2025.",
+        "difficulty": "easy"
+    },
+    {
+        "question": "What risk factors does Apple identify related to supply chain?",
+        "expected_answer": "Reliance on single sources for components, geopolitical tensions, trade disputes, tariffs, natural disasters",
+        "ground_truth": "Apple identifies risks including reliance on single or limited sources for components, geopolitical tensions, trade disputes, tariffs on imports, natural disasters, and public health issues that could disrupt its global supply chain.",
+        "difficulty": "hard"
+    }
 ]

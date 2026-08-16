@@ -610,3 +610,12 @@ redis-cli keys "finsight:cache:*" | xargs redis-cli del
   Model loaded once at module level to avoid per-request overhead. 
   Added `sentence-transformers` and config constants 
   (`RERANK_TOP_K=20`, `RERANK_FINAL_K=5`, `RERANK_MODEL`).
+
+### 16 Aug 2026
+- **RAGAS Evaluation Pipeline** — added standardised RAG evaluation using RAGAS 
+  framework alongside existing keyword matching and LLM-as-judge evals. 15 
+  answerable test cases with ground truth from Apple 2025 10-K. Metrics: 
+  context_precision (0.53), context_recall (0.76), faithfulness (0.68). 
+  Identified chunking quality as primary bottleneck — dense financial tables 
+  don't retrieve cleanly. Answer_relevancy metric pending langchain-openai 
+  version fix.

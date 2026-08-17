@@ -61,6 +61,12 @@ def retrieve_hybrid(user_query, k=RERANK_TOP_K):
 
     # Step 7 — retrieve with re-ranking
     results = reranking_retriever.invoke(user_query)
+    
+    # Strip context labels — generator sees only original content
+    for doc in results:
+        if "original_content" in doc.metadata:
+            doc.page_content = doc.metadata["original_content"]
+    
     return results
 
 

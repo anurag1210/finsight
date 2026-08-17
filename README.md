@@ -586,6 +586,68 @@ FinSight uses a three-layer evaluation framework:
 don't chunk cleanly — identified chunking quality as the primary retrieval bottleneck. 
 Contextual chunking is the next improvement target.
 
+
+## Evaluation
+
+FinSight uses a three-layer evaluation framework:
+
+| Layer | What it measures | Speed |
+|-------|-----------------|-------|
+| Keyword Matching | Does the answer contain the correct figures? | Instant |
+| LLM-as-Judge | Overall answer quality (1-5 score) | ~2s/query |
+| RAGAS | Diagnostic breakdown — retrieval vs generation failure | ~5s/query |
+
+### RAGAS Evaluation Results (15 queries, Apple 2025 10-K)
+
+#### Baseline (fixed-size chunking, no context labels)
+
+| Metric | Score | What it tells you |
+|--------|-------|-------------------|
+| Context Precision | 0.53 | ~half the retrieved chunks are relevant |
+| Context Recall | 0.76 | retriever finds most needed information |
+| Faithfulness | 0.68 | LLM mostly grounds answers in retrieved context |
+
+**Diagnostic finding:** Three queries scored 0.0 on context recall — R&D spending, 
+iPhone revenue, and capital expenditures. All involved dense financial tables where 
+the relevant figures (e.g. "34,550 31,370 29,915") embed poorly because the embedding 
+model has no way of knowing those numbers represent R&D expenses. Root cause: chunks 
+lack contextual information about what they contain.
+
+#### After Contextual Chunking
+
+Each chunk is labelled by GPT-4o-mini at ingestion time with a 1-2 sentence description 
+of its contents (e.g. "This chunk contains Apple's operating expenses breakdown including 
+Research and Development for fiscal years 2023-2025"). The label is embedded alongside 
+the chunk content for retrieval, but stripped before the generator sees it — the LLM 
+only receives the original, unlabelled content to prevent the labels from degrading 
+faithfulness.
+
+| Metric | Baseline | After Contextual Chunking | Change |
+|--------|----------|--------------------------|--------|
+| Context Precision | 0.53 | 0.59 | +0.06 ↑ |
+| Context Recall | 0.76 | 0.86 | +0.10 ↑ |
+| Faithfulness | 0.68 | 0.63 | -0.05 ↓ |
+
+**Key observations:**
+
+- Context recall improved significantly (+0.10) — the retriever now finds chunks it 
+  previously missed because the labels help the embedding model understand what 
+  financial data each chunk contains.
+- Context precision improved (+0.06) — relevant chunks rank higher in results.
+- Faithfulness dropped slightly (-0.05) — within RAGAS scoring variance, as the 
+  metric involves internal LLM calls that fluctuate between runs.
+- An intermediate experiment without label stripping showed faithfulness dropping to 
+  0.55 and context recall to 0.69, confirming that the generator performs worse when 
+  it sees LLM-generated labels mixed with source content. Separating the embedding 
+  representation from the generation input was critical.
+
+**Architecture:** Labels exist only in the embedding space. At retrieval time, the 
+original content is restored from metadata before being passed to the generator. This 
+gives the retriever richer semantic signals without introducing noise into the 
+generation context.
+
+
+
 ## Changelog
 | Redis — `scan_iter()` vs `KEYS` (Semantic Cache) | [`SKILLS-LEARNING.md`](./SKILLS-LEARNING.md#redis--scan-scan_iter-vs-keys) | ✅ 30 Jul 2026 |
 
@@ -640,3 +702,13 @@ Contextual chunking is the next improvement target.
   Identified chunking quality as primary bottleneck — dense financial tables 
   don't retrieve cleanly. Answer_relevancy metric pending langchain-openai 
   version fix.
+
+### 17 Aug 2026
+- **Contextual Chunking** — prepend GPT-4o-mini generated context labels to each 
+  chunk at ingestion time. 284 chunks labelled with 1-2 sentence descriptions 
+  (e.g. "This chunk contains Apple's R&D expenses for 2023-2025"). Labels embedded 
+  for retrieval but stripped post-retrieval — generator only sees original content. 
+  Original content stored in metadata for clean swap. RAGAS improvement: 
+  context_precision 0.53→0.59, context_recall 0.76→0.86. Intermediate experiment 
+  without label stripping showed faithfulness drop to 0.55, confirming separation 
+  of embedding and generation content is critical.

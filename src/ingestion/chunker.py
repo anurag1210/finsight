@@ -1,6 +1,7 @@
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
-from src.config import CHUNK_SIZE, CHUNK_OVERLAP
+from src.config import CHUNK_SIZE, CHUNK_OVERLAP,OPENAI_API_KEY
+from openai import OpenAI
 
 
 
@@ -26,7 +27,44 @@ def chunk_documents(documents: list[Document]) -> list[Document]:
     print(f"Split {len(documents)} pages into {len(chunks)} chunks")
     print(f"Chunk size: {CHUNK_SIZE}, Overlap: {CHUNK_OVERLAP}")
 
+    chunks = add_context_labels(chunks)
+    return chunks
 
+
+def add_context_labels(chunks: list[Document]) -> list[Document]:
+    """Prepend a context label to each chunk using LLM."""
+    
+    client = OpenAI(api_key=OPENAI_API_KEY)
+    
+    print(f"Adding context labels to {len(chunks)} chunks...")
+    
+    for i, chunk in enumerate(chunks):
+        source = chunk.metadata.get("source", "SEC filing")
+        page = chunk.metadata.get("page", "unknown")
+        
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            max_tokens=100,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are a document labeller. Given a chunk from an SEC 10-K filing, write a 1-2 sentence description of what this chunk contains. Be specific — mention the company name, the type of data (revenue, expenses, risk factors, etc.), and the time period if visible. No preamble, just the description."
+                },
+                {
+                    "role": "user",
+                    "content": chunk.page_content
+                }
+            ]
+        )
+        
+        label = response.choices[0].message.content.strip()
+        chunk.metadata["original_content"] = chunk.page_content
+        chunk.page_content = f"{label}\n\n{chunk.page_content}"
+        
+        if (i + 1) % 50 == 0:
+            print(f"  Labelled {i + 1}/{len(chunks)} chunks...")
+    
+    print(f"Context labels added to all {len(chunks)} chunks.")
     return chunks
 
 

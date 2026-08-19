@@ -13,7 +13,8 @@ except ModuleNotFoundError:
 
 _vector_store = None
 
-print("Initializing the Vector Store DB")
+
+print("Initializing the Vector Store DB", file=sys.stderr)
 
 def get_vector_store():
     global _vector_store

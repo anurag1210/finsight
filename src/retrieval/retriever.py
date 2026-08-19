@@ -11,8 +11,17 @@ from langchain_classic.retrievers import ContextualCompressionRetriever
 from langchain_classic.retrievers.document_compressors import CrossEncoderReranker
 from langchain_community.cross_encoders import HuggingFaceCrossEncoder
 
-_cross_encoder = HuggingFaceCrossEncoder(model_name=RERANK_MODEL)
-_compressor = CrossEncoderReranker(model=_cross_encoder, top_n=RERANK_FINAL_K)
+#Incorporating Lazy Loading
+_cross_encoder = None
+_compressor = None
+
+def _get_compressor():
+    global _cross_encoder, _compressor
+    if _compressor is None:
+        _cross_encoder = HuggingFaceCrossEncoder(model_name=RERANK_MODEL)
+        _compressor = CrossEncoderReranker(model=_cross_encoder, top_n=RERANK_FINAL_K)
+    return _compressor
+
 
 #Method to retrieve the embeddings from the vector db
 def retrieve_vectordb(user_query,filter=None):
@@ -55,7 +64,7 @@ def retrieve_hybrid(user_query, k=RERANK_TOP_K):
     
     # Step 6 — rerank
     reranking_retriever = ContextualCompressionRetriever(
-        base_compressor=_compressor,
+        base_compressor=_get_compressor(),
         base_retriever=ensemble,
     )
 

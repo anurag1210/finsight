@@ -21,3 +21,4 @@ tenacity
 rank-bm25
 sentence-transformers
 ragas
+mcp

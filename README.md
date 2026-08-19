@@ -777,7 +777,7 @@ Restart Claude Desktop. Tools appear automatically in the chat input area.
   without label stripping showed faithfulness drop to 0.55, confirming separation 
   of embedding and generation content is critical.
 
-  ### 19 Aug 2026
+### 19 Aug 2026
 - **MCP Server Implementation** — exposed FinSight as standardised MCP tools 
   using MCPServer (mcp v2.0.0). Two tools: `query_filing` (full RAG pipeline, 
   returns generated answer) and `get_filing_context` (retrieval only, returns 

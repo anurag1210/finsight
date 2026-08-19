@@ -688,6 +688,18 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
 
 Restart Claude Desktop. Tools appear automatically in the chat input area.
 
+
+### MCP in Action
+
+**Claude Desktop calling `query_filing`:**
+
+![MCP query_filing tool call](docs/screenshot/mcp.png)
+
+**Claude Desktop calling `get_filing_context`:**
+
+![MCP get_filing_context tool call](docs/screenshot/mcp1.png)
+
+
 ### Production Considerations
 
 - **Lazy loading**: Cross-encoder model loads on first tool call, not at 

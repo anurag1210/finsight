@@ -693,11 +693,11 @@ Restart Claude Desktop. Tools appear automatically in the chat input area.
 
 **Claude Desktop calling `query_filing`:**
 
-![MCP query_filing tool call](docs/screenshot/mcp.png)
+![MCP query_filing tool call](docs/screenshot/mcp1.png)
 
 **Claude Desktop calling `get_filing_context`:**
 
-![MCP get_filing_context tool call](docs/screenshot/mcp1.png)
+![MCP get_filing_context tool call](docs/screenshot/mcp.png)
 
 
 ### Production Considerations

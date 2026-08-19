@@ -646,6 +646,58 @@ original content is restored from metadata before being passed to the generator.
 gives the retriever richer semantic signals without introducing noise into the 
 generation context.
 
+## MCP Server
+
+FinSight exposes its retrieval pipeline as standardised tools via the 
+[Model Context Protocol (MCP)](https://modelcontextprotocol.io/). Any 
+MCP-compatible client — Claude Desktop, Cursor, custom agents — can 
+discover and call FinSight tools without bespoke integration code.
+
+### Available Tools
+
+| Tool | What it does |
+|------|-------------|
+| `query_filing` | Full RAG pipeline — retrieves relevant chunks and generates a grounded answer |
+| `get_filing_context` | Retrieval only — returns top 5 ranked chunks for the calling agent to reason over |
+
+### Available Resources
+
+| Resource | What it does |
+|----------|-------------|
+| `filings://available` | Lists all SEC filings currently loaded in the system |
+
+### Claude Desktop Integration
+
+Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "finsight": {
+      "command": "/path/to/finsight/venv/bin/python",
+      "args": ["-m", "src.mcp_server"],
+      "cwd": "/path/to/finsight",
+      "env": {
+        "PYTHONPATH": "/path/to/finsight",
+        "HF_HOME": "/tmp/hf_cache"
+      }
+    }
+  }
+}
+```
+
+Restart Claude Desktop. Tools appear automatically in the chat input area.
+
+### Production Considerations
+
+- **Lazy loading**: Cross-encoder model loads on first tool call, not at 
+  server startup — prevents MCP connection timeouts during the ~30s model load.
+- **Stdout isolation**: All print statements redirected to stderr. MCP uses 
+  stdout exclusively for JSON-RPC — any stray print corrupts the protocol 
+  and disconnects the client.
+- **Dual tool design**: `query_filing` for end-to-end answers, 
+  `get_filing_context` for agents that want raw context to reason over 
+  themselves. Different agents need different levels of abstraction.
 
 
 ## Changelog
@@ -712,3 +764,15 @@ generation context.
   context_precision 0.53→0.59, context_recall 0.76→0.86. Intermediate experiment 
   without label stripping showed faithfulness drop to 0.55, confirming separation 
   of embedding and generation content is critical.
+
+  ### 19 Aug 2026
+- **MCP Server Implementation** — exposed FinSight as standardised MCP tools 
+  using MCPServer (mcp v2.0.0). Two tools: `query_filing` (full RAG pipeline, 
+  returns generated answer) and `get_filing_context` (retrieval only, returns 
+  raw chunks for agent reasoning). Connected to Claude Desktop via stdio 
+  transport. Required lazy loading of cross-encoder to avoid startup timeout, 
+  stderr redirect for stdout isolation, and PYTHONPATH env for module 
+  resolution. Verified end-to-end: Claude Desktop called `query_filing` with 
+  "What was Apple's total revenue in 2025?" and received correct answer 
+  ($416,161M). Tested `get_filing_context` for R&D spending — returned 5 
+  ranked chunks, 3 directly on-target.

@@ -712,6 +712,28 @@ Restart Claude Desktop. Tools appear automatically in the chat input area.
   themselves. Different agents need different levels of abstraction.
 
 
+## API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/query` | POST | Full response — waits for complete answer, returns JSON |
+| `/query/stream` | POST | Streaming — tokens arrive via SSE as they generate |
+| `/health` | GET | Health check |
+
+### Streaming Example
+
+```bash
+curl -N -X POST http://localhost:8000/query/stream \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: YOUR_KEY" \
+  -d '{"query": "What was Apple total revenue in 2025?"}'
+```
+
+Tokens arrive as Server-Sent Events (`data: token\n\n`). Any SSE-compatible 
+client — React, mobile apps, Python `requests` with `stream=True` — can 
+render them as flowing text. Cached responses return instantly as a single event.
+
+
 ## Changelog
 | Redis — `scan_iter()` vs `KEYS` (Semantic Cache) | [`SKILLS-LEARNING.md`](./SKILLS-LEARNING.md#redis--scan-scan_iter-vs-keys) | ✅ 30 Jul 2026 |
 
@@ -788,3 +810,11 @@ Restart Claude Desktop. Tools appear automatically in the chat input area.
   "What was Apple's total revenue in 2025?" and received correct answer 
   ($416,161M). Tested `get_filing_context` for R&D spending — returned 5 
   ranked chunks, 3 directly on-target.
+
+### 24 Aug 2026
+- **Streaming on FastAPI** — added `/query/stream` SSE endpoint for real-time 
+  token streaming. Tokens flow to the client as the LLM generates them — 
+  first token arrives in 1-2 seconds instead of waiting 5-10 seconds for 
+  the full response. Cached responses return instantly as a single chunk. 
+  Input guard validates before stream starts. Original `/query` endpoint 
+  unchanged for clients that need the complete JSON response.

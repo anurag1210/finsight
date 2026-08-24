@@ -734,6 +734,10 @@ client — React, mobile apps, Python `requests` with `stream=True` — can
 render them as flowing text. Cached responses return instantly as a single event.
 
 
+### Streaming in Action
+![FastAPI streaming response](docs/screenshot/streaming.gif)
+
+
 ## Changelog
 | Redis — `scan_iter()` vs `KEYS` (Semantic Cache) | [`SKILLS-LEARNING.md`](./SKILLS-LEARNING.md#redis--scan-scan_iter-vs-keys) | ✅ 30 Jul 2026 |
 

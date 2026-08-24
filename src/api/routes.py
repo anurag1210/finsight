@@ -1,15 +1,12 @@
-
 from fastapi.security import APIKeyHeader
 from src.api.models import QueryRequest, QueryResponse
-from src.generation.generator import generate_response
+from src.generation.generator import generate_response, generate_response_stream
 from src.security.input_guard import quick_check as input_quick_check
 from src.security.output_guard import check_output as output_quick_check
 from fastapi import APIRouter, HTTPException, Security, Depends, Request
-
-
+from fastapi.responses import StreamingResponse
 from slowapi import Limiter
 from slowapi.util import get_remote_address
-
 import os
 from dotenv import load_dotenv
 
@@ -40,6 +37,22 @@ async def query(request: Request,req: QueryRequest) -> QueryResponse:
         raise HTTPException(status_code=500, detail=message)
 
     return QueryResponse(answer=answer)
+
+
+@router.post("/query/stream", dependencies=[Depends(verify_api_key)])
+@limiter.limit("10/minute")
+async def query_stream(request: Request, req: QueryRequest):
+    is_safe, message = input_quick_check(req.query)
+    if not is_safe:
+        raise HTTPException(status_code=400, detail=message)
+
+    def event_stream():
+        for chunk in generate_response_stream(req.query):
+            yield f"data: {chunk}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")
+
 
 @router.get("/health")
 async def health():

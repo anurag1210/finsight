@@ -822,3 +822,12 @@ render them as flowing text. Cached responses return instantly as a single event
   the full response. Cached responses return instantly as a single chunk. 
   Input guard validates before stream starts. Original `/query` endpoint 
   unchanged for clients that need the complete JSON response.
+
+### 26 Aug 2026
+- **Real-Time Document Upload** — added sidebar file uploader to Streamlit UI. 
+  Users can upload any SEC filing (PDF) and query it immediately. Three-layer 
+  validation: PDF type restriction, 50MB size limit, and LLM-based financial 
+  document classification that rejects non-financial documents. Full ingestion 
+  pipeline runs on upload — parse, chunk, contextual labelling, and embedding. 
+  Verified: non-financial PDF rejected with error message, Apple 2025 10-K 
+  accepted and queryable within minutes.

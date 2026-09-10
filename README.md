@@ -738,6 +738,42 @@ render them as flowing text. Cached responses return instantly as a single event
 ![FastAPI streaming response](docs/screenshot/streaming.gif)
 
 
+## Docker Deployment
+
+FinSight runs as three decoupled containers:
+
+| Service | Image | Port | Purpose |
+|---------|-------|------|---------|
+| app | finsight-app | 8501, 8000 | Streamlit UI + FastAPI |
+| redis | redis:7-alpine | 6379 | Semantic caching |
+| chromadb | chromadb/chroma | 8100 | Vector database |
+
+### Quick Start
+
+```bash
+git clone https://github.com/anurag1210/finsight.git
+cd finsight
+cp .env.example .env    # add your OpenAI and API keys
+docker compose up --build
+```
+
+Open `http://localhost:8501` — upload an SEC filing and start querying.
+
+### Architecture
+
+────────────────────────────┐
+│ app container │
+│ ├── Streamlit :8501 │───► Browser
+│ └── FastAPI :8000 │───► API clients
+└──────┬──────────┬──────────┘
+│ │
+▼ ▼
+┌──────────┐ ┌──────────┐
+│ redis │ │ chromadb │
+│ :6379 │ │ :8000 │
+└──────────┘ └──────────┘
+
+
 ## Changelog
 | Redis — `scan_iter()` vs `KEYS` (Semantic Cache) | [`SKILLS-LEARNING.md`](./SKILLS-LEARNING.md#redis--scan-scan_iter-vs-keys) | ✅ 30 Jul 2026 |
 

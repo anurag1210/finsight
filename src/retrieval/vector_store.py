@@ -1,18 +1,18 @@
-#Importing the necessary packages
-from langchain_openai import OpenAIEmbeddings
-from langchain_chroma import Chroma
-from src.config import OPENAI_API_KEY, EMBEDDING_MODEL, CHROMA_PERSIST_DIR, COLLECTION_NAME
+import os
 import sys
 
-# Optional override for macOS environments that need pysqlite3
 try:
     __import__("pysqlite3")
     sys.modules["sqlite3"] = sys.modules.pop("pysqlite3")
 except ModuleNotFoundError:
     pass
 
-_vector_store = None
+from langchain_openai import OpenAIEmbeddings
+from langchain_chroma import Chroma
+from src.config import OPENAI_API_KEY, EMBEDDING_MODEL, CHROMA_PERSIST_DIR, COLLECTION_NAME
+import chromadb
 
+_vector_store = None
 
 print("Initializing the Vector Store DB", file=sys.stderr)
 
@@ -23,9 +23,23 @@ def get_vector_store():
             api_key=OPENAI_API_KEY,
             model=EMBEDDING_MODEL
         )
-        _vector_store = Chroma(
-            collection_name=COLLECTION_NAME,
-            embedding_function=embedding_model,
-            persist_directory=CHROMA_PERSIST_DIR
-        )
+        
+        chroma_host = os.getenv("CHROMA_HOST")
+        
+        if chroma_host:
+            # Docker mode — connect to ChromaDB server
+            chroma_port = int(os.getenv("CHROMA_PORT", "8100"))
+            client = chromadb.HttpClient(host=chroma_host, port=chroma_port)
+            _vector_store = Chroma(
+                collection_name=COLLECTION_NAME,
+                embedding_function=embedding_model,
+                client=client,
+            )
+        else:
+            # Local mode — use persist directory
+            _vector_store = Chroma(
+                collection_name=COLLECTION_NAME,
+                embedding_function=embedding_model,
+                persist_directory=CHROMA_PERSIST_DIR,
+            )
     return _vector_store

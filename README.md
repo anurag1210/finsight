@@ -831,3 +831,16 @@ render them as flowing text. Cached responses return instantly as a single event
   pipeline runs on upload — parse, chunk, contextual labelling, and embedding. 
   Verified: non-financial PDF rejected with error message, Apple 2025 10-K 
   accepted and queryable within minutes.
+
+### 10 Sep 2026
+- **Docker Compose** — containerised FinSight into three decoupled services: 
+  app (Streamlit + FastAPI), Redis (redis:7-alpine), and ChromaDB 
+  (chromadb/chroma). One `docker compose up --build` starts everything. 
+  vector_store.py updated to support both local development (persist 
+  directory) and Docker mode (HttpClient to ChromaDB container). BGE 
+  reranker model pre-downloaded in Dockerfile to avoid cold-start delays. 
+  Real-time logging enabled via PYTHONUNBUFFERED=1. Streamlit file watcher 
+  disabled in Docker to suppress torchvision warnings. System prompt 
+  updated with conversational fallback for non-financial messages. 
+  Verified end-to-end across containers: document upload, financial 
+  validation, chunking, contextual labelling, embedding, and querying.

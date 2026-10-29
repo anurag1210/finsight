@@ -46,11 +46,20 @@ async def query_stream(request: Request, req: QueryRequest):
     if not is_safe:
         raise HTTPException(status_code=400, detail=message)
 
+    #Added the check for output guard for streaming responses which was missing from the previous setup
+    # 29thOct'26
     def event_stream():
+        parts = []
         for chunk in generate_response_stream(req.query):
+            parts.append(chunk)
             yield f"data: {chunk}\n\n"
-        yield "data: [DONE]\n\n"
 
+        is_safe, _ = output_quick_check("".join(parts))
+        if not is_safe:
+            yield "event: replace\ndata: I can't provide an answer to this question.\n\n"
+            return
+
+        yield "data: [DONE]\n\n"
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
 
